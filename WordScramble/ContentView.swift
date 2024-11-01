@@ -8,14 +8,45 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+    @State private var usedWords: [String] = [String]()
+    @State private var rootWord: String = ""
+    @State private var newWord: String = ""
+    
+    
+    func addNewWord() {
+        let answer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        guard answer.count > 0 else { return }
+        
+        withAnimation {
+            usedWords.insert(answer, at: 0)
         }
-        .padding()
+        newWord = ""
+    }
+    var body: some View {
+        
+        NavigationStack {
+            List {
+                Section {
+                    TextField("Enter a word", text: $newWord)
+                        .onSubmit(addNewWord)
+                        .textInputAutocapitalization(.never)
+                }
+                
+                Section {
+                    ForEach(usedWords, id: \.self) { word in
+                        HStack {
+                            Image(systemName: "\(word.count).circle")
+                            Text(word)
+                        }
+                    }
+                    .onDelete(perform: {
+                        usedWords.remove(atOffsets: $0)
+                    })
+                }
+            }
+            .navigationTitle("Word Scramble")
+        }
+        
     }
 }
 
