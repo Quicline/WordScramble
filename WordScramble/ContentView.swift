@@ -20,7 +20,20 @@ struct ContentView: View {
         withAnimation {
             usedWords.insert(answer, at: 0)
         }
+        
         newWord = ""
+    }
+    
+    func startGame() {
+        if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
+            if let startWords = try? String(contentsOf: startWordsURL, encoding: String.Encoding.utf8) {
+                let allWords = startWords.components(separatedBy: "\n")
+                rootWord = allWords.randomElement() ?? "silkworm"
+                return
+            }
+        }
+        
+        fatalError("Could not load start.txt from bundle")
     }
     var body: some View {
         
@@ -28,8 +41,8 @@ struct ContentView: View {
             List {
                 Section {
                     TextField("Enter a word", text: $newWord)
-                        .onSubmit(addNewWord)
                         .textInputAutocapitalization(.never)
+                        .onSubmit(addNewWord)
                 }
                 
                 Section {
@@ -44,7 +57,8 @@ struct ContentView: View {
                     })
                 }
             }
-            .navigationTitle("Word Scramble")
+            .navigationTitle(rootWord)
+            .onAppear(perform: startGame)
         }
         
     }
