@@ -109,6 +109,11 @@ struct ContentView: View {
                 }
             }
             .navigationTitle(rootWord)
+            .toolbar {
+                Button("Start Game") {
+                    startGame()
+                }
+            }
             .onAppear(perform: startGame)
             .alert(errorTitle, isPresented: $showingError) { } message: {
                 Text(errorMessage)
